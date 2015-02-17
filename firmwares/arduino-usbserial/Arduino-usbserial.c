@@ -91,6 +91,7 @@ int main(void)
 		/* Only try to read in bytes from the CDC interface if the transmit buffer is not full */
 		if (!(RingBuffer_IsFull(&USBtoUSART_Buffer)))
 		{
+			//從USB host端接收Data,將資料放入USBtoUSART_Buffer
 			int16_t ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
 
 			/* Read bytes from the USB OUT endpoint into the USART transmit buffer */
