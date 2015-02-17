@@ -99,6 +99,7 @@ int main(void)
 			  RingBuffer_Insert(&USBtoUSART_Buffer, ReceivedByte);
 		}
 		
+		//看看有沒有資料要送USB Host端(Data buffer快滿時才送)
 		/* Check if the UART receive buffer flush timer has expired or the buffer is nearly full */
 		RingBuff_Count_t BufferCount = RingBuffer_GetCount(&USARTtoUSB_Buffer);
 		if ((TIFR0 & (1 << TOV0)) || (BufferCount > BUFFER_NEARLY_FULL))
@@ -122,7 +123,7 @@ int main(void)
 			if (PulseMSRemaining.RxLEDPulse && !(--PulseMSRemaining.RxLEDPulse))
 			  LEDs_TurnOffLEDs(LEDMASK_RX);
 		}
-		
+		//將剛剛USB Host送來的Data送UART去(至Atmage328 or Atmega2560)
 		/* Load the next byte from the USART transmit buffer into the USART */
 		if (!(RingBuffer_IsEmpty(&USBtoUSART_Buffer))) {
 		  Serial_TxByte(RingBuffer_Remove(&USBtoUSART_Buffer));
@@ -130,8 +131,8 @@ int main(void)
 		  	LEDs_TurnOnLEDs(LEDMASK_RX);
 			PulseMSRemaining.RxLEDPulse = TX_RX_LED_PULSE_MS;
 		}
-		
-		CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+		//執行CDC相關USB任務
+		CDC_Device_USBTask(&VirtualSerial_CDC_Interface); 
 		USB_USBTask();
 	}
 }
