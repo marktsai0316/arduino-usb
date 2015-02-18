@@ -59,15 +59,15 @@ USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
 		.Config = 
 			{
 				.ControlInterfaceNumber         = 0,
-
+				//see descriptor.h =3
 				.DataINEndpointNumber           = CDC_TX_EPNUM,
 				.DataINEndpointSize             = CDC_TXRX_EPSIZE,
 				.DataINEndpointDoubleBank       = false,
-
+				//see descriptor.h =4
 				.DataOUTEndpointNumber          = CDC_RX_EPNUM,
 				.DataOUTEndpointSize            = CDC_TXRX_EPSIZE,
 				.DataOUTEndpointDoubleBank      = false,
-
+				//see descriptor.h =2
 				.NotificationEndpointNumber     = CDC_NOTIFICATION_EPNUM,
 				.NotificationEndpointSize       = CDC_NOTIFICATION_EPSIZE,
 				.NotificationEndpointDoubleBank = false,
@@ -145,6 +145,7 @@ void SetupHardware(void)
 	wdt_disable();
 
 	/* Hardware Initialization */
+	//以9600 Baud rate 傳送資料
 	Serial_Init(9600, false);
 	LEDs_Init();
 	USB_Init();
@@ -221,6 +222,7 @@ void EVENT_CDC_Device_LineEncodingChanged(USB_ClassInfo_CDC_Device_t* const CDCI
 /** ISR to manage the reception of data from the serial port, placing received bytes into a circular buffer
  *  for later transmission to the host.
  */
+//當UART有資料進來時,會被呼叫.在此會將ReceiveByte放入UARTtoUSB_Buffer
 ISR(USART1_RX_vect, ISR_BLOCK)
 {
 	uint8_t ReceivedByte = UDR1;
